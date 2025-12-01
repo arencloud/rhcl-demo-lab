@@ -16,7 +16,7 @@ metadata:
   name: orders
   namespace: rhcl-demo-lab
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: orders
