@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rhcl-demo-lab
+  labels:
+    istio.io/rev: msm3-v1-27-3
+    msm3-discovery: enabled

@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rhcl-microservices
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/arencloud/rhcl-demo-lab.git
+    targetRevision: HEAD
+    path: app
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rhcl-demo-lab
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rhcl-kuadrant
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/arencloud/rhcl-demo-lab.git
+    targetRevision: HEAD
+    path: gw/lan
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rhcl-demo-lab
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: rhcl-demo-lab
+  namespace: rhcl-demo-lab
+  annotations:
+    metallb.io/address-pool: ip-addresspool
+    metallb.io/ip-allocated-from-pool: ip-addresspool
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: "*.int.rhcl.arencloud.com"
+      allowedRoutes:
+        namespaces:
+          from: Same

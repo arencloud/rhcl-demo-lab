@@ -1,0 +1,20 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: inventory-route
+  namespace: rhcl-demo-lab
+spec:
+  hostnames:
+    - inventory.int.rhcl.arencloud.com
+  parentRefs:
+    - name: rhcl-demo-lab
+      kind: Gateway
+      namespace: rhcl-demo-lab
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1/items
+      backendRefs:
+        - name: inventory
+          port: 8080
