@@ -89,8 +89,12 @@ flowchart LR
     i[inventory.int.rhcl.arencloud.com]
   end
 
-  o -->|HTTP :80 /api/v1/orders| GW{{Gateway (istio)}}
-  i -->|HTTP :80 /api/v1/inventory| GW
+  %% Define Gateway node first (older Mermaid on GitHub is stricter with inline node creation)
+  GW{{Gateway (istio)}}
+
+  %% Ingress traffic from hostnames to Gateway
+  o -->|HTTP:80 /api/v1/orders| GW
+  i -->|HTTP:80 /api/v1/inventory| GW
 
   GW -->|HTTPRoute orders| SVC_O[(Service: orders:8080)]
   GW -->|HTTPRoute inventory| SVC_I[(Service: inventory:8080)]
