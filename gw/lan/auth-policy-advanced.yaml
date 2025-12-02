@@ -33,7 +33,7 @@ spec:
         opa:
           rego: |
             package kuadrant.authz
-            default allow = false
+            # default allow = false
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
