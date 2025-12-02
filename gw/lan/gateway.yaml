@@ -25,3 +25,4 @@ spec:
           from: Same
       tls:
         mode: Terminate
+        certificateRefs: []
