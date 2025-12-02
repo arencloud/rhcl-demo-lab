@@ -25,4 +25,7 @@ spec:
           from: Same
       tls:
         mode: Terminate
-        options: {}
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: rhcl-demo-lab-tls
