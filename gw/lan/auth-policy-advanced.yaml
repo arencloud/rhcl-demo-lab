@@ -18,16 +18,16 @@ spec:
       keycloak-jwt:
         jwt:
           issuerUrl: https://auth.arencloud.com:30238/realms/rhcl-demo
-          #jwksUrl: https://auth.arencloud.com:30238/realms/rhcl-demo/protocol/openid-connect/certs
+          jwksUrl: https://auth.arencloud.com:30238/realms/rhcl-demo/protocol/openid-connect/certs
         audiences:
           - rhcl-microservices
     metadata: # <--- New Section to capture the request body
       request-body:
         http:
-          request:
-            method: POST # Only capture for POST requests
-            body:
-              json: {} # Instructs Authorino to parse the body as JSON and inject it
+          method: POST # Only capture for POST requests
+          contentType: application/json
+          body:
+            json: {} # Instructs Authorino to parse the body as JSON and inject it
     authorization:
       opa-role-checks:
         opa:
