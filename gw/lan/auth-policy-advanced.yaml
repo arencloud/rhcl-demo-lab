@@ -33,51 +33,61 @@ spec:
         opa:
           rego: |
             package kuadrant.authz
-            # default allow = false
+            # Extract fields safely
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
-            method := upper(input.context.request.http.method)
+            method := to_upper(input.context.request.http.method)
             headers := input.context.request.http.headers
-            tenant := input.context.request.http.query["tenant"][0]
-            # Reference the captured body from the metadata section
+            query := input.context.request.http.query
+            
+            # Safe tenant extraction
+            tenant := query.tenant[_]
+            
+            # Safe body reference (only present if body capture enabled)
             body := input.metadata.request_body
             
+            # Header check (must exist, or rule fails cleanly)
             required_header {
-              lower(headers["x-env"][0]) == "lan"
+              headers["x-env"]
+              to_lower(headers["x-env"][0]) == "lan"
             }
+
+            # Tenant must exist and equal "demo"
             required_tenant {
               tenant == "demo"
             }
-            # Rule for inventory GET (Read)
+            
+            # Final allow rule (single rule required by Authorino)
             allow {
+
               required_header
               required_tenant
-              startswith(path, "/api/v1/items")
-              method == "GET"
-              roles[_] == "inventory.reader"
-            }
-            # Rule for inventory non-GET (Write)
-            allow {
-              required_header
-              required_tenant
-              startswith(path, "/api/v1/items")
-              method != "GET"
-              roles[_] == "inventory.writer"
-            }
-            # Rule for orders GET (Read)
-            allow {
-              required_header
-              required_tenant
-              startswith(path, "/api/v1/orders")
-              method == "GET"
-              roles[_] == "orders.reader"
-            }
-            # Rule for orders non-GET (Write) with body check
-            allow {
-              required_header
-              required_tenant
-              startswith(path, "/api/v1/orders")
-              method != "GET"
-              roles[_] == "orders.writer"
-              body.tenant == "demo"
+
+              (
+                # ------------------------------
+                # Inventory rules
+                # ------------------------------
+                startswith(path, "/api/v1/items") &&
+                (
+                  (method == "GET"  && roles[_] == "inventory.reader") ||
+                  (method != "GET" && roles[_] == "inventory.writer")
+                )
+              )
+
+              ||
+
+              (
+                # ------------------------------
+                # Order rules
+                # ------------------------------
+                startswith(path, "/api/v1/orders") &&
+                (
+                  (method == "GET"  && roles[_] == "orders.reader") ||
+                  (
+                    method != "GET" &&
+                    roles[_] == "orders.writer" &&
+                    body.tenant == "demo"
+                  )
+                )
+              )
             }
