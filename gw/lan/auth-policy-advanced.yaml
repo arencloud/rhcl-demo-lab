@@ -15,7 +15,6 @@ spec:
           type: PathPrefix
           value: /
     authentication:
-      name: keycloak
       jwt:
         issuer: https://auth.arencloud.com:30238/realms/rhcl-demo
         remoteJWKS:
@@ -23,7 +22,6 @@ spec:
         audiences:
           - rhcl-microservices
     authorization:
-      name: realm-roles-and-headers
       opa:
         inlineRego: |
           package kuadrant.authz
