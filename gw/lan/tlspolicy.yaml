@@ -1,0 +1,13 @@
+apiVersion: kuadrant.io/v1
+kind: TLSPolicy
+metadata:
+  name: rhcl-demo-lab-tls-policy
+  namespace: rhcl-demo-lab
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: rhcl-demo-lab
+  issuerRef:
+    name: webapps
+    kind: ClusterIssuer
