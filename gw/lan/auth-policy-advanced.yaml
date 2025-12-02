@@ -21,6 +21,13 @@ spec:
           uri: https://auth.arencloud.com:30238/realms/rhcl-demo/protocol/openid-connect/certs
         audiences:
           - rhcl-microservices
+    metadata: # <--- New Section to capture the request body
+      request-body:
+        http:
+          request:
+            method: POST # Only capture for POST requests
+            body:
+              json: { } # Instructs Authorino to parse the body as JSON and inject it
     authorization:
       opa:
         inlineRego: |
@@ -31,7 +38,8 @@ spec:
           method := upper(input.context.request.http.method)
           headers := input.context.request.http.headers
           tenant := input.context.request.http.query["tenant"][0]
-          body := input.context.request.http.body
+          # Reference the captured body from the metadata section
+          body := input.metadata.request_body
           
           required_header {
             lower(headers["x-env"][0]) == "lan"
@@ -39,7 +47,7 @@ spec:
           required_tenant {
             tenant == "demo"
           }
-          
+          # Rule for inventory GET (Read)
           allow {
             required_header
             required_tenant
@@ -47,6 +55,7 @@ spec:
             method == "GET"
             roles[_] == "inventory.reader"
           }
+          # Rule for inventory non-GET (Write)
           allow {
             required_header
             required_tenant
@@ -54,6 +63,7 @@ spec:
             method != "GET"
             roles[_] == "inventory.writer"
           }
+          # Rule for orders GET (Read)
           allow {
             required_header
             required_tenant
@@ -61,6 +71,7 @@ spec:
             method == "GET"
             roles[_] == "orders.reader"
           }
+          # Rule for orders non-GET (Write) with body check
           allow {
             required_header
             required_tenant
