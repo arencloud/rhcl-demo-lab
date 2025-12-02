@@ -36,18 +36,18 @@ spec:
 
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
-            method := to_upper(input.context.request.http.method)
+            method := upper(input.context.request.http.method)
             headers := input.context.request.http.headers
             query := input.context.request.http.query
             body := input.metadata.request_body
 
-            # Guard for header
+            # Require x-env header and validate safely
             required_header {
               headers["x-env"]
-              to_lower(headers["x-env"][0]) == "lan"
+              lower(headers["x-env"][0]) == "lan"
             }
 
-            # Guard for tenant query param
+            # Require tenant query param
             required_tenant {
               query.tenant
               query.tenant[_] == "demo"
