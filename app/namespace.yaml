@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   name: rhcl-demo-lab
   labels:
-    istio.io/rev: msm3-v1-27-3
+    istio.io/rev: prod
     msm3-discovery: enabled
