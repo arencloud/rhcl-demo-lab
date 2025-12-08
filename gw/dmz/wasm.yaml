@@ -13,8 +13,10 @@ spec:
     creationPolicy: Owner
     template:
       type: kubernetes.io/dockerconfigjson
+      data:
+        .dockerconfigjson: '{{ .AUTH | b64dec }}'
   data:
-    - secretKey: ".dockerconfigjson"
+    - secretKey: AUTH
       remoteRef:
         key: "wasm"
         property: AUTH
