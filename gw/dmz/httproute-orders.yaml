@@ -1,0 +1,42 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: orders-route
+  namespace: app-global-dmz
+spec:
+  hostnames:
+    - orders.ext.rhcl.arencloud.com
+  parentRefs:
+    - name: rhcl-demo-lab-dmz
+      kind: Gateway
+      namespace: app-global-dmz
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1/orders
+            method: GET
+        - path:
+            type: PathPrefix
+            value: /api/v1/orders
+          method: POST
+        - path:
+            type: PathPrefix
+            value: /api/v1/orders
+          method: PUT
+        - path:
+            type: PathPrefix
+            value: /api/v1/orders
+          method: DELETE
+        - path:
+            type: PathPrefix
+            value: /healthz
+          method: GET
+        - path:
+            type: PathPrefix
+            value: /whoami
+          method: GET
+      backendRefs:
+        - name: orders
+          port: 8080
+          namespace: orders

@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-order-service-from-app-global-lan
+  namespace: orders
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: app-global-lan
+  to:
+    - group: ''
+      kind: Service
+      name: order

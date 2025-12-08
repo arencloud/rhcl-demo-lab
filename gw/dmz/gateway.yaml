@@ -1,0 +1,24 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: rhcl-demo-lab-dmz
+  namespace: app-global-dmz
+  annotations:
+    kuadrant.io/managed: 'true'
+    metallb.io/address-pool: ip-addresspool
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.ext.rhcl.arencloud.com"
+      allowedRoutes:
+        namespaces:
+          from: Same
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: rhcl-demo-lab-dmz-tls

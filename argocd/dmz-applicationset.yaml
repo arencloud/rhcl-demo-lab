@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: rhcl-demo-dmz
+  namespace: openshift-gitops
+spec:
+  generators:
+    - list:
+        elements:
+          - name: inventories
+            path: app/dmz/inventories
+            namespace: inventories
+          - name: orders
+            path: app/dmz/orders
+            namespace: orders
+          - name: rhcl-gateway
+            path: gw/dmz
+            namespace: app-global-dmz
+  template:
+    metadata:
+      name: rhcl-{{name}}
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/arencloud/rhcl-demo-lab.git
+        targetRevision: HEAD
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

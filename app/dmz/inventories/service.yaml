@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: inventory
+  namespace: inventories
+  labels:
+    app: inventory
+    service: inventory
+    version: v1
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  clusterIP: None

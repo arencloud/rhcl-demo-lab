@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: orders
+  labels:
+    istio.io/rev: prod
+    msm3-discovery: enabled
