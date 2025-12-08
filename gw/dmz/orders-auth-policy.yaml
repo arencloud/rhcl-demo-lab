@@ -1,0 +1,51 @@
+apiVersion: kuadrant.io/v1beta1
+kind: AuthPolicy
+metadata:
+  name: dmz-auth-orders-policy
+  namespace: app-global-dmz
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: inventory-route
+    namespace: app-global-dmz
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      authentication:
+        keycloak:
+          jwt:
+            issuerUrl: https://auth.arencloud.com:30238/realms/rhcl-demo
+            audiences:
+              - rhcl-microservices
+      authorization:
+        opa-role-checks:
+          opa:
+            rego: |
+              package kuadrant.authz
+              roles := input.auth.identity.realm_access.roles
+              path := input.context.request.http.path
+              method := upper(input.context.request.http.method)
+
+              allow {
+                startswith(path, "/api/v1/orders")
+                method == "GET"
+                roles[_] == "orders.reader"
+              }
+              allow {
+                startswith(path, "/api/v1/orders")
+                method == "POST"
+                roles[_] == "orders.writer"
+              }
+              allow {
+                startswith(path, "/api/v1/orders")
+                method == "PUT"
+                roles[_] == "orders.writer"
+              }
+              allow {
+                startswith(path, "/api/v1/orders")
+                method != "DELETE"
+                roles[_] == "orders.deleter"
+              }
