@@ -37,6 +37,6 @@ spec:
             value: /whoami
           method: GET
       backendRefs:
-        - name: orders
+        - name: order
           port: 8080
           namespace: orders
