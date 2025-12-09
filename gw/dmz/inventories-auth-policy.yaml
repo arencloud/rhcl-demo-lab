@@ -28,18 +28,10 @@ spec:
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
-            headers_in := input.context.request.http.headers
-            
-            # Safely read x-env regardless of case
-            xenv := lower(headers_in["x-env"][0]) {
-              headers_in["x-env"]
-            }
-            xenv := lower(headers_in["X-Env"][0]) {
-              headers_in["X-Env"]
-            }
+            headers := input.context.request.http.headers
             
             required_header {
-              xenv == "lan"
+              lower(headers["x-env"][0]) == "lan"
             }
             
             allow {
@@ -65,8 +57,4 @@ spec:
               startswith(path, "/api/v1/items")
               method == "DELETE"
               roles[_] == "inventory.deleter"
-            }
-            # Debug response headers
-            response_headers := {
-              "X-Env": xenv,
             }
