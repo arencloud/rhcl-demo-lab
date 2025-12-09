@@ -28,10 +28,18 @@ spec:
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
-            headers := input.context.request.http.headers
+            headers_in := input.context.request.http.headers
+            
+            # Safely read x-env regardless of case
+            xenv := lower(headers_in["x-env"][0]) {
+              headers_in["x-env"]
+            }
+            xenv := lower(headers_in["X-Env"][0]) {
+              headers_in["X-Env"]
+            }
             
             required_header {
-            lower(headers["x-env"][0]) == "lan"
+              xenv == "lan"
             }
             
             allow {
@@ -41,21 +49,24 @@ spec:
               roles[_] == "inventory.reader"
             }
             allow {
+              required_header
               startswith(path, "/api/v1/items")
               method == "POST"
               roles[_] == "inventory.writer"
             }
             allow {
+              required_header
               startswith(path, "/api/v1/items")
               method == "PUT"
               roles[_] == "inventory.writer"
             }
             allow {
+              required_header
               startswith(path, "/api/v1/items")
               method == "DELETE"
               roles[_] == "inventory.deleter"
             }
-            headers := {
-              "X-Debug-Headers": concat(",", headers),
-              "X-Env": lower(headers["x-env"][0]),
+            # Debug response headers
+            response_headers := {
+              "X-Env": xenv,
             }
