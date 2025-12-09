@@ -1,0 +1,50 @@
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata:
+  name: lan-auth-inventory-policy
+  namespace: app-global-lan
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: inventory-route
+    namespace: app-global-lan
+  rules:
+    matches:
+      - path:
+          type: PathPrefix
+          value: /
+    authentication:
+      keycloak:
+        jwt:
+          issuerUrl: https://auth.arencloud.com:30238/realms/rhcl-demo
+          audiences:
+            - rhcl-microservices
+    authorization:
+      opa-role-checks:
+        opa:
+          rego: |
+            package kuadrant.authz
+            roles := input.auth.identity.realm_access.roles
+            path := input.context.request.http.path
+            method := upper(input.context.request.http.method)
+            allow {
+              startswith(path, "/api/v1/items")
+              method == "GET"
+              roles[_] == "inventory.reader"
+            }
+            allow {
+              startswith(path, "/api/v1/items")
+              method == "POST"
+              roles[_] == "inventory.writer"
+            }
+            allow {
+              startswith(path, "/api/v1/items")
+              method == "PUT"
+              roles[_] == "inventory.writer"
+            }
+            allow {
+              startswith(path, "/api/v1/items")
+              method == "DELETE"
+              roles[_] == "inventory.deleter"
+            }
