@@ -45,6 +45,6 @@ spec:
             }
             allow {
               startswith(path, "/api/v1/items")
-              method != "DELETE"
+              method == "DELETE"
               roles[_] == "inventory.deleter"
             }

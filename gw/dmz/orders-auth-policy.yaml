@@ -45,6 +45,6 @@ spec:
             }
             allow {
               startswith(path, "/api/v1/orders")
-              method != "DELETE"
+              method == "DELETE"
               roles[_] == "orders.deleter"
             }
