@@ -10,6 +10,10 @@ spec:
     name: inventory-route
     namespace: app-global-dmz
   rules:
+    metadata:
+      all-headers:
+        headers:
+          selector: request.headers
     matches:
       - path:
           type: PathPrefix
