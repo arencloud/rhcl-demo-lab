@@ -31,7 +31,7 @@ spec:
             headers := input.context.request.http.headers
             
             required_header {
-              lower(headers["x-env"][0]) == "lan"
+              lower(headers["x-env"][0]) == "dmz"
             }
             
             allow {
