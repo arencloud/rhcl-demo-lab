@@ -18,6 +18,7 @@ spec:
       keycloak:
         jwt:
           issuerUrl: https://auth.arencloud.com:30238/realms/rhcl-demo
+          jwksUrl: https://auth.arencloud.com:30238/realms/rhcl-demo/protocol/openid-connect/certs
           audiences:
             - rhcl-microservices
     authorization:
