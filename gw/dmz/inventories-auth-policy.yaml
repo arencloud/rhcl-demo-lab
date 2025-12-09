@@ -31,8 +31,13 @@ spec:
             method := upper(input.context.request.http.method)
             headers := input.context.request.http.headers
             
+            # Safely read header (avoids crash if missing)
+            xenv := lower(headers["x-env"][0]) {
+              headers["x-env"]
+            }
+            
             required_header {
-              lower(headers["x-env"][0]) == "dmz"
+              xenv == "dmz"
             }
             
             allow {
@@ -58,4 +63,21 @@ spec:
               startswith(path, "/api/v1/items")
               method == "DELETE"
               roles[_] == "inventory.deleter"
+            }
+            
+            # -----------------------------
+            # DEBUG OUTPUT (shows required_header)
+            # -----------------------------
+            response := {
+              "headers": {
+                # This prints whether `required_header` evaluated to true
+                "X-Debug-Required-Header": required_header,
+
+                # This prints what value x-env was read as
+                "X-Debug-Xenv": xenv,
+
+                # Useful extra context
+                "X-Debug-Path": path,
+                "X-Debug-Method": method,
+              }
             }
