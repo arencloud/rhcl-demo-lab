@@ -29,7 +29,7 @@ spec:
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
-            headers := input.context.request.http.headers
+            headers := input.context.request.headers
             
             # Safely read header (avoids crash if missing)
             xenv := lower(headers["x-env"][0]) {
