@@ -42,6 +42,9 @@ spec:
             # Required header boolean
             required_header := xenv == "dmz"
             
+            # IMPORTANT: default deny
+            default allow = false
+            
             allow {
               required_header
               startswith(path, "/api/v1/items")
