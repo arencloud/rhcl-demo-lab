@@ -82,9 +82,15 @@ spec:
             # -----------------------------
             response := {
               "headers": {
-                # This now references the explicitly bound variable 'required_header'
+                # 1. Shows the value of the specific header we care about
+                "X-Debug-Xenv": xenv, 
+            
+                # 2. Shows the ENTIRE HEADER MAP (as a JSON string)
+                # This will show ALL headers Authorino received from Envoy.
+                "X-Debug-All-Headers": json.marshal(headers),
+
+                # 3. Contextual checks
                 "X-Debug-Required-Header": required_header,
-                "X-Debug-Xenv": xenv,
                 "X-Debug-Path": path,
                 "X-Debug-Method": method,
               }
