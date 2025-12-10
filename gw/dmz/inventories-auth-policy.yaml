@@ -38,13 +38,14 @@ spec:
             ####################################################################
             # RELIABLE extraction of "x-env" header regardless of normalization
             ####################################################################
-            xenv := val {
-              some key, header_val
-              lower(key) == "x-env"              # match case-insensitively
-              val := lower(header_val)           # lowercase the value safely
+            xenv := lower(v) {
+              # iterate safely over all key/value pairs
+              headers[k]
+              v := headers[k]
+              lower(k) == "x-env"
             }
 
-            # If no header matched → set to empty string
+            # default if not found
             xenv := "" {
               not xenv
             }
