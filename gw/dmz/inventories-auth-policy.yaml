@@ -26,23 +26,37 @@ spec:
         opa:
           rego: |
             package kuadrant.authz
+                  
+            ####################################################################
+            # Basic request context
+            ####################################################################
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
             headers := input.context.request.headers
             
-            # Safely read x-env header
-            xenv := lower(headers["x-env"]) {
-              headers["x-env"]
+            ####################################################################
+            # RELIABLE extraction of "x-env" header regardless of normalization
+            ####################################################################
+            xenv := val {
+              some key, header_val
+              lower(key) == "x-env"              # match case-insensitively
+              val := lower(header_val)           # lowercase the value safely
             }
+
+            # If no header matched → set to empty string
             xenv := "" {
-              not headers["x-env"]
+              not xenv
             }
-          
-            # Required header boolean
+
+            ####################################################################
+            # Required header logic
+            ####################################################################
             required_header := xenv == "dmz"
-            
-            
+
+            ####################################################################
+            # Authorization rules
+            ####################################################################
             allow {
               required_header
               startswith(path, "/api/v1/items")
@@ -68,21 +82,18 @@ spec:
               roles[_] == "inventory.deleter"
             }
             
-            # -----------------------------
-            # DEBUG OUTPUT (Based on the OPA output)
-            # -----------------------------
+            ####################################################################
+            # Debug output
+            # Returned ONLY when "allow" is true
+            ####################################################################
             response := {
               "headers": {
-                # 1. Shows the value of the specific header we care about
-                "X-Debug-Xenv": xenv, 
-            
-                # 2. Shows the ENTIRE HEADER MAP (as a JSON string)
-                # This will show ALL headers Authorino received from Envoy.
+                "X-Debug-Xenv": xenv,
                 "X-Debug-All-Headers": json.marshal(headers),
-
-                # 3. Contextual checks
                 "X-Debug-Required-Header": required_header,
                 "X-Debug-Path": path,
-                "X-Debug-Method": method,
+                "X-Debug-Method": method
               }
+            } {
+              allow
             }
