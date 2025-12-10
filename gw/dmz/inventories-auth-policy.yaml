@@ -32,7 +32,7 @@ spec:
             headers := input.context.request.headers
             
             # Safely read x-env header
-            xenv := lowercase(headers["x-env"]) {
+            xenv := lower(headers["x-env"]) {
               headers["x-env"]
             }
             xenv := "" {
