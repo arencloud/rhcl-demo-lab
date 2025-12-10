@@ -32,8 +32,13 @@ spec:
             headers := input.context.request.headers
             
             # Safely read header (avoids crash if missing)
-            xenv := lower(headers["x-env"][0]) {
-              headers["x-env"]
+            # Note: Headers are usually lower-cased keys in the map, 
+            # and for single-value headers, the value is a string, not a list.
+            xenv := "" {
+              input.context.request.headers["x-env"]
+              xenv := lower(input.context.request.headers["x-env"])
+            } else {
+              xenv := ""
             }
             
             required_header {
