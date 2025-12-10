@@ -38,17 +38,13 @@ spec:
             ####################################################################
             # RELIABLE extraction of "x-env" header regardless of normalization
             ####################################################################
-            xenv := lower(v) {
-              # iterate safely over all key/value pairs
+            xenv := result {
+              some k
               headers[k]
-              v := headers[k]
               lower(k) == "x-env"
-            }
-
-            # default if not found
-            xenv := "" {
-              not xenv
-            }
+              v := headers[k]
+              result := lower(v)
+            } else = ""  # ONLY run if first body fails; no recursion
 
             ####################################################################
             # Required header logic
