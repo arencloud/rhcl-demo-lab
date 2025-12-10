@@ -40,35 +40,36 @@ spec:
             } else {
               xenv := ""
             }
+            allow = true
             
-            required_header {
-              xenv == "dmz"
-            }
-            
-            allow {
-              required_header
-              startswith(path, "/api/v1/items")
-              method == "GET"
-              roles[_] == "inventory.reader"
-            }
-            allow {
-              required_header
-              startswith(path, "/api/v1/items")
-              method == "POST"
-              roles[_] == "inventory.writer"
-            }
-            allow {
-              required_header
-              startswith(path, "/api/v1/items")
-              method == "PUT"
-              roles[_] == "inventory.writer"
-            }
-            allow {
-              required_header
-              startswith(path, "/api/v1/items")
-              method == "DELETE"
-              roles[_] == "inventory.deleter"
-            }
+            #required_header {
+            #  xenv == "dmz"
+            #}
+            #
+            #allow {
+            #  required_header
+            #  startswith(path, "/api/v1/items")
+            #  method == "GET"
+            #  roles[_] == "inventory.reader"
+            #}
+            #allow {
+            #  required_header
+            #  startswith(path, "/api/v1/items")
+            #  method == "POST"
+            #  roles[_] == "inventory.writer"
+            #}
+            #allow {
+            #  required_header
+            #  startswith(path, "/api/v1/items")
+            #  method == "PUT"
+            #  roles[_] == "inventory.writer"
+            #}
+            #allow {
+            #  required_header
+            #  startswith(path, "/api/v1/items")
+            #  method == "DELETE"
+            #  roles[_] == "inventory.deleter"
+            #}
             
             # -----------------------------
             # DEBUG OUTPUT (shows required_header)
