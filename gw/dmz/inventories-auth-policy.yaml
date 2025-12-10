@@ -38,6 +38,13 @@ spec:
             } else {
               xenv := ""
             }
+            
+            # ---------------------------------------------
+            # !!! FIX for "rego_unsafe_var_error" !!!
+            # Define the required_header logic as a variable using 'some'
+            # to ensure it's bound before use in the response block.
+            required_header := true { xenv == "dmz" }
+            required_header := false { xenv != "dmz" }
             # ---------------------------------------------
             allow = true
             
