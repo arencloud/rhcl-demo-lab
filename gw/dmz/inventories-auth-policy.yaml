@@ -32,15 +32,19 @@ spec:
             headers := input.context.request.headers
             
             # Safely read header (avoids crash if missing)
-            # Note: Headers are usually lower-cased keys in the map, 
-            # and for single-value headers, the value is a string, not a list.
-            xenv := "" {
+            xenv_val := "" {
               input.context.request.headers["x-env"]
-              xenv := lower(input.context.request.headers["x-env"])
+              xenv_val := lower(input.context.request.headers["x-env"])
             } else {
-              xenv := ""
+              xenv_val := ""
             }
             allow = true
+            
+            # The 'output' is captured regardless of the 'allow' decision
+            # (though only useful if 'allow' is true for the response headers)
+            output := {
+              "xenv_debug_value": xenv_val
+            }
             
             #required_header {
             #  xenv == "dmz"
@@ -72,17 +76,12 @@ spec:
             #}
             
             # -----------------------------
-            # DEBUG OUTPUT (shows required_header)
+            # DEBUG OUTPUT (Based on the OPA output)
             # -----------------------------
             response := {
               "headers": {
-                # This prints whether `required_header` evaluated to true
-                "X-Debug-Required-Header": required_header,
-
-                # This prints what value x-env was read as
-                "X-Debug-Xenv": xenv,
-
-                # Useful extra context
+                # This uses the OPA output from the 'output' rule below
+                "X-Debug-Xenv-Value": "{auth.authorization.opa-role-checks.output.xenv_debug_value}",
                 "X-Debug-Path": path,
                 "X-Debug-Method": method,
               }
