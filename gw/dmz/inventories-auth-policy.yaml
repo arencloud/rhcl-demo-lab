@@ -94,9 +94,9 @@ spec:
             }
             
             # Safe field accessor
-            field(obj, key, val) {
+            field(obj, key, out) {
               type_name(obj) == "object"
-              val := obj[key]
+              out := obj[key]
             }
             
             # Type helpers
