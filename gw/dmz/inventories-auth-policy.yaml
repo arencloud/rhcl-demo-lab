@@ -93,47 +93,55 @@ spec:
               type_name(body) == "object"
             }
             
-            # Safe field accessor
-            field(obj, key, out) {
-              type_name(obj) == "object"
-              out := obj[key]
-            }
-            
-            # Type helpers
-            is_string(v) { type_name(v) == "string" }
-            is_number(v) { type_name(v) == "number" }
-            is_object(v) { type_name(v) == "object" }
-            is_array(v)  { type_name(v) == "array" }
-            
-            # Generic schema for POST/PUT items
-            expected_schema := {
-              "name":        "string",
-              "description": "string",
-              "price":       "number",
-              "tenant":      "string"
-            }
-            
-            # Validate body structure and types
-            body_valid_schema {
+            name_present {
               body_exists
-              expected_schema[key] == expected_type
-              field(body, key, value)
-              type_name(value) == expected_type
-            }
-            
-            tenant_matches_query {
-              field(body, "tenant", t)
-              t == query["tenant"]
-            }
-            
-            price_ok {
-              field(body, "price", p)
-              is_number(p)
+              body.name
             }
               
-            name_ok {
-              field(body, "name", n)
-              is_string(n)
+            description_present {
+              body_exists
+              body.description
+            }
+              
+            price_present {
+              body_exists
+              body.price
+            }
+              
+            tenant_present {
+              body_exists
+              body.tenant
+            }
+            
+            name_is_string {
+              name_present
+              type_name(body.name) == "string"
+            }
+              
+            description_is_string {
+              description_present
+              type_name(body.description) == "string"
+            }
+              
+            price_is_number {
+              price_present
+              type_name(body.price) == "number"
+            }
+              
+            tenant_is_string {
+              tenant_present
+              type_name(body.tenant) == "string"
+            }
+            
+            schema_itemA_ok {
+              name_is_string
+              description_is_string
+              price_is_number
+              tenant_is_string
+            }
+            
+            body_schema_ok {
+              schema_itemA_ok
             }
 
             ####################################################################
@@ -150,10 +158,7 @@ spec:
               required_header
               tenant_demo
               body_exists
-              body_valid_schema
-              tenant_matches_query
-              price_ok
-              name_ok
+              body_schema_ok
               startswith(path, "/api/v1/items")
               method == "POST"
               roles[_] == "inventory.writer"
@@ -162,10 +167,7 @@ spec:
               required_header
               tenant_demo
               body_exists
-              body_valid_schema
-              tenant_matches_query
-              price_ok
-              name_ok
+              body_schema_ok
               startswith(path, "/api/v1/items")
               method == "PUT"
               roles[_] == "inventory.writer"
