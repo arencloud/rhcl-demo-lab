@@ -33,7 +33,6 @@ spec:
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
             headers := input.context.request.http.headers
-            query := input.context.request.http.query
             ####################################################################
             # RELIABLE extraction of "x-env" header regardless of normalization
             ####################################################################
@@ -49,6 +48,25 @@ spec:
             # Required header logic
             ####################################################################
             required_header := xenv_val == "dmz"
+            
+            ####################################################################
+            # Query parsing helpers
+            ####################################################################
+            
+            # Extract raw query string from path: "/api/v1/items?tenant=demo&region=emea"
+            raw_query := split(path, "?")[1] {
+              contains(path, "?")
+            }
+            
+            # Build a map { "tenant": "demo", "region": "emea", ... }
+            query := {k: v |
+              raw_query                               # guard: only if query is present
+              pair := split(raw_query, "&")[_]        # iterate "tenant=demo", "region=emea"
+              kv := split(pair, "=")
+              count(kv) == 2
+              k := kv[0]
+              v := kv[1]
+            }
             
             ####################################################################
             # RELIABLE extraction of "tenant" param 
