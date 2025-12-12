@@ -38,8 +38,13 @@ spec:
             ####################################################################
             # RELIABLE extraction of "x-env" header regardless of normalization
             ####################################################################
-            xenv := lower(headers["x-env"])
-            xenv_val := xenv else ""
+            xenv_val = v {
+              xenv := lower(headers["x-env"])
+              v := xenv
+            } else = "" {
+              # Header missing or undefined
+              not headers["x-env"]
+            }
 
             ####################################################################
             # Required header logic
