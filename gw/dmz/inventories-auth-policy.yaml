@@ -181,8 +181,9 @@ spec:
             }
             response := {
               "headers": {
-                "X-Debug-Query-Raw": json.marshal(query),
-                "X-Debug-Tenant-Val": tenant_val
+                "X-Debug-Body": json.marshal(body),
+                "X-Debug-Body-Exists": body_exists,
+                "X-Debug-Body-Schema-Ok": body_schema_ok
               }
             } {
               allow
