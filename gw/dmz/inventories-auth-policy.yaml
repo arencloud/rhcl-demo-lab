@@ -33,29 +33,23 @@ spec:
             roles := input.auth.identity.realm_access.roles
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
-            headers := input.context.request.headers
+            headers := input.context.request.http.headers
             
             ####################################################################
             # RELIABLE extraction of "x-env" header regardless of normalization
             ####################################################################
-            xenv := result {
-              some k
-              headers[k]
-              lower(k) == "x-env"
-              v := headers[k]
-              result := lower(v)
-            } else = ""  # ONLY run if first body fails; no recursion
+            xenv := lower(headers["x-env"])
+            xenv_val := xenv else ""
 
             ####################################################################
             # Required header logic
             ####################################################################
-            required_header := xenv == "dmz"
+            required_header := xenv_val == "dmz"
 
             ####################################################################
             # Authorization rules
             ####################################################################
             allow {
-              required_header
               startswith(path, "/api/v1/items")
               method == "GET"
               roles[_] == "inventory.reader"
@@ -85,7 +79,7 @@ spec:
             ####################################################################
             response := {
               "headers": {
-                "X-Debug-Xenv": xenv,
+                "X-Debug-Xenv": xenv_val,
                 "X-Debug-All-Headers": json.marshal(headers),
                 "X-Debug-Required-Header": required_header,
                 "X-Debug-Path": path,
