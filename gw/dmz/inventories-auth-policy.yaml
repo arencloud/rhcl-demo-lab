@@ -33,7 +33,7 @@ spec:
             path := input.context.request.http.path
             method := upper(input.context.request.http.method)
             headers := input.context.request.http.headers
-            
+            query := input.context.request.http.query
             ####################################################################
             # RELIABLE extraction of "x-env" header regardless of normalization
             ####################################################################
@@ -49,30 +49,51 @@ spec:
             # Required header logic
             ####################################################################
             required_header := xenv_val == "dmz"
+            
+            ####################################################################
+            # RELIABLE extraction of "tenant" param 
+            ####################################################################
+            tenant_val = v {
+              v := query["tenant"]
+              # Ensuring the tenant value is a string
+              type_name(v) == "string"
+              # In case to allow ANY tenant but ensure it is present
+              # count(v) > 0
+            }
+  
+            tenant_is(expected) {
+              tenant_val == expected
+              # Case-insensitive check
+              # lower(tenant_val) == lower(expected)
+            }
 
             ####################################################################
             # Authorization rules
             ####################################################################
             allow {
               required_header
+              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "GET"
               roles[_] == "inventory.reader"
             }
             allow {
               required_header
+              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "POST"
               roles[_] == "inventory.writer"
             }
             allow {
               required_header
+              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "PUT"
               roles[_] == "inventory.writer"
             }
             allow {
               required_header
+              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "DELETE"
               roles[_] == "inventory.deleter"
