@@ -72,29 +72,33 @@ spec:
             ####################################################################
             allow {
               required_header
-              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "GET"
               roles[_] == "inventory.reader"
             }
             allow {
               required_header
-              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "POST"
               roles[_] == "inventory.writer"
             }
             allow {
               required_header
-              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "PUT"
               roles[_] == "inventory.writer"
             }
             allow {
               required_header
-              tenant_is("demo")
               startswith(path, "/api/v1/items")
               method == "DELETE"
               roles[_] == "inventory.deleter"
+            }
+            response := {
+              "headers": {
+                "X-Debug-Query-Raw": json.marshal(query),
+                "X-Debug-Tenant-Val": tenant_val
+              }
+            } {
+              allow
             }
