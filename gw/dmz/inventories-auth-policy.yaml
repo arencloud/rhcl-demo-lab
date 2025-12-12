@@ -54,6 +54,7 @@ spec:
             # Authorization rules
             ####################################################################
             allow {
+              required_header
               startswith(path, "/api/v1/items")
               method == "GET"
               roles[_] == "inventory.reader"
