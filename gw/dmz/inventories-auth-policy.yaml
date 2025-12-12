@@ -18,7 +18,6 @@ spec:
       keycloak:
         jwt:
           issuerUrl: https://auth.arencloud.com:30238/realms/rhcl-demo
-          #jwksUrl: https://auth.arencloud.com:30238/realms/rhcl-demo/protocol/openid-connect/certs
           audiences:
             - rhcl-microservices
     authorization:
@@ -76,20 +75,4 @@ spec:
               startswith(path, "/api/v1/items")
               method == "DELETE"
               roles[_] == "inventory.deleter"
-            }
-            
-            ####################################################################
-            # Debug output
-            # Returned ONLY when "allow" is true
-            ####################################################################
-            response := {
-              "headers": {
-                "X-Debug-Xenv": xenv_val,
-                "X-Debug-All-Headers": json.marshal(headers),
-                "X-Debug-Required-Header": required_header,
-                "X-Debug-Path": path,
-                "X-Debug-Method": method
-              }
-            } {
-              allow
             }
