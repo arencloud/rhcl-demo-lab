@@ -4,6 +4,8 @@ metadata:
   name: rhcl-demo-lab-dmz
   namespace: app-global-dmz
   annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
     kuadrant.io/managed: 'true'
     metallb.io/address-pool: ip-addresspool
 spec:
