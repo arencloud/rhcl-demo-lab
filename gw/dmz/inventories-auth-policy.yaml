@@ -23,11 +23,11 @@ spec:
     authorization:
       opa-role-checks:
         opa:
-          with:
+          externalPolicy:
             requestBody:
-              includeBody: true          # Enables Envoy → OPA body forwarding
-              maxBytes: 65536            # Adjust as required
-              allowPartial: false        # Require full body
+              includeBody: true
+              maxBytes: 65536
+              allowPartial: false
           rego: |
             package kuadrant.authz
                   
