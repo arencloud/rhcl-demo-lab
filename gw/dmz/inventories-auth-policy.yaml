@@ -21,10 +21,6 @@ spec:
           audiences:
             - rhcl-microservices
     authorization:
-      requestBody:
-        includeBody: true
-        maxBytes: 65536
-        allowPartial: false
       opa-role-checks:
         opa:
           rego: |
