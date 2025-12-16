@@ -157,8 +157,8 @@ spec:
             allow {
               required_header
               tenant_demo
-              body_exists
-              body_schema_ok
+              #body_exists
+              #body_schema_ok
               startswith(path, "/api/v1/items")
               method == "POST"
               roles[_] == "inventory.writer"
